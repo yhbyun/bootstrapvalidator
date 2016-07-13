@@ -1086,7 +1086,7 @@ if (typeof jQuery === 'undefined') {
 
                     case this.STATUS_VALID:
                         // If the field is valid (passes all validators)
-                        isValidField = ($allErrors.filter('[data-bv-result="' + this.STATUS_NOT_VALIDATED +'"]').length === 0)
+                        isValidField = ($allErrors.filter('[data-bv-result="' + this.STATUS_NOT_VALIDATED +'"]').length === 0 && $allErrors.filter('[data-bv-result="' + this.STATUS_VALIDATING +'"]').length === 0)
                                      ? ($allErrors.filter('[data-bv-result="' + this.STATUS_VALID +'"]').length === $allErrors.length)  // All validators are completed
                                      : null;                                                                                            // There are some validators that have not done
                         if (isValidField !== null) {

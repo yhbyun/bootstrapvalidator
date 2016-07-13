@@ -2,9 +2,9 @@
  * BootstrapValidator (http://bootstrapvalidator.com)
  * The best jQuery plugin to validate form fields. Designed to use with Bootstrap 3
  *
- * @version     v0.5.3, built on 2014-11-05 9:14:18 PM
+ * @version     v0.5.3, built on 2016-07-13 4:18:18 PM
  * @author      https://twitter.com/nghuuphuoc
- * @copyright   (c) 2013 - 2014 Nguyen Huu Phuoc
+ * @copyright   (c) 2013 - 2016 Nguyen Huu Phuoc
  * @license     Commercial: http://bootstrapvalidator.com/license/
  *              Non-commercial: http://creativecommons.org/licenses/by-nc-nd/3.0/
  */
@@ -1086,7 +1086,7 @@ if (typeof jQuery === 'undefined') {
 
                     case this.STATUS_VALID:
                         // If the field is valid (passes all validators)
-                        isValidField = ($allErrors.filter('[data-bv-result="' + this.STATUS_NOT_VALIDATED +'"]').length === 0)
+                        isValidField = ($allErrors.filter('[data-bv-result="' + this.STATUS_NOT_VALIDATED +'"]').length === 0 && $allErrors.filter('[data-bv-result="' + this.STATUS_VALIDATING +'"]').length === 0)
                                      ? ($allErrors.filter('[data-bv-result="' + this.STATUS_VALID +'"]').length === $allErrors.length)  // All validators are completed
                                      : null;                                                                                            // There are some validators that have not done
                         if (isValidField !== null) {
