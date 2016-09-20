@@ -96,7 +96,8 @@ if (typeof jQuery === 'undefined') {
                     threshold:      this.$form.attr('data-bv-threshold'),
                     trigger:        this.$form.attr('data-bv-trigger'),
                     verbose:        this.$form.attr('data-bv-verbose'),
-                    fields:         {}
+                    fields:         {},
+                    disableSubmitButton: false
                 };
 
             this.$form
@@ -318,7 +319,7 @@ if (typeof jQuery === 'undefined') {
                 $field.off(events).on(events, function() {
                     that.updateStatus($(this), that.STATUS_NOT_VALIDATED);
                 });
-                
+
                 // Create help block elements for showing the error messages
                 $field.data('bv.messages', $message);
                 for (validatorName in this.options.fields[field].validators) {
@@ -386,7 +387,7 @@ if (typeof jQuery === 'undefined') {
                         // All fields with the same name have the same icon
                         fields.data('bv.icon', $icon);
                     }
-                    
+
                     if (container) {
                         $field
                             // Show tooltip/popover message when field gets focus
@@ -615,7 +616,7 @@ if (typeof jQuery === 'undefined') {
             var cannotType = $.inArray($field.attr('type'), ['button', 'checkbox', 'file', 'hidden', 'image', 'radio', 'reset', 'submit']) !== -1;
             return (cannotType || $field.val().length >= threshold);
         },
-        
+
         // ---
         // Events
         // ---
@@ -828,6 +829,10 @@ if (typeof jQuery === 'undefined') {
          * @returns {BootstrapValidator}
          */
         disableSubmitButtons: function(disabled) {
+            if (!this.options.disableSubmitButton) {
+                return this;
+            }
+
             if (!disabled) {
                 this.$form.find(this.options.submitButtons).removeAttr('disabled');
             } else if (this.options.live !== 'disabled') {
@@ -992,7 +997,7 @@ if (typeof jQuery === 'undefined') {
                 $(this).data('bv.messages').find('.help-block[data-bv-validator="' + validator + '"][data-bv-for="' + field + '"]').html(message);
             });
         },
-        
+
         /**
          * Update all validating results of field
          *
