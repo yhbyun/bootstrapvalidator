@@ -1012,6 +1012,12 @@ if (typeof jQuery === 'undefined') {
                 case 'object':
                     fields = field;
                     field  = field.attr('data-bv-field');
+
+                    // validatio rule이 지정되지 않은 입력 필드
+                    if (typeof field === 'undefined') {
+                        return this;
+                    }
+
                     break;
                 case 'string':
                     fields = this.getFieldElements(field);
@@ -1019,6 +1025,10 @@ if (typeof jQuery === 'undefined') {
                 default:
                     break;
             }
+
+            //yhbyun
+            // validatio rule이 지정되지 않은 입력 필드
+            if (!field || !this.options.fields[field]) return this;
 
             if (status === this.STATUS_NOT_VALIDATED) {
                 // Reset the flag
