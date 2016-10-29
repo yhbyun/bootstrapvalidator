@@ -111,8 +111,8 @@ if (typeof jQuery === 'undefined') {
                 })
                 .on('click.bv', this.options.submitButtons, function() {
                     that.$submitButton  = $(this);
-					// The user just click the submit button
-					that._submitIfValid = true;
+                    // The user just click the submit button
+                    that._submitIfValid = true;
                 })
                 // Find all fields which have either "name" or "data-bv-field" attribute
                 .find('[name], [data-bv-field]')
