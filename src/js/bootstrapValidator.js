@@ -87,11 +87,16 @@ if (typeof jQuery === 'undefined') {
                         invalid:    this.$form.attr('data-bv-feedbackicons-invalid'),
                         validating: this.$form.attr('data-bv-feedbackicons-validating')
                     },
-                    group:          this.$form.attr('data-bv-group'),
                     live:           this.$form.attr('data-bv-live'),
                     message:        this.$form.attr('data-bv-message'),
                     onError:        this.$form.attr('data-bv-onerror'),
                     onSuccess:      this.$form.attr('data-bv-onsuccess'),
+                    row: {
+                        selector: this.$form.attr("data-bv-row-selector") || this.$form.attr("data-bv-group"),
+                        valid: this.$form.attr("data-bv-row-valid"),
+                        invalid: this.$form.attr("data-bv-row-invalid"),
+                        feedback: this.$form.attr("data-bv-row-feedback")
+                    },
                     submitButtons:  this.$form.attr('data-bv-submitbuttons'),
                     threshold:      this.$form.attr('data-bv-threshold'),
                     trigger:        this.$form.attr('data-bv-trigger'),
@@ -126,6 +131,7 @@ if (typeof jQuery === 'undefined') {
                         }
                     });
 
+            // options이 최종 결정되는 곳
             this.options = $.extend(true, this.options, options);
 
             // When pressing Enter on any field in the form, the first submit button will do its job.
@@ -228,11 +234,13 @@ if (typeof jQuery === 'undefined') {
                     container:     $field.attr('data-bv-container'),
                     excluded:      $field.attr('data-bv-excluded'),
                     feedbackIcons: $field.attr('data-bv-feedbackicons'),
-                    group:         $field.attr('data-bv-group'),
                     message:       $field.attr('data-bv-message'),
                     onError:       $field.attr('data-bv-onerror'),
                     onStatus:      $field.attr('data-bv-onstatus'),
                     onSuccess:     $field.attr('data-bv-onsuccess'),
+                    row:           $field.attr('data-bv-row')
+                        || $field.attr('data-bv-group')
+                        || (this.options.fields && this.options.fields[field] ? this.options.fields[field].group : null),
                     selector:      $field.attr('data-bv-selector'),
                     threshold:     $field.attr('data-bv-threshold'),
                     trigger:       $field.attr('data-bv-trigger'),
@@ -301,14 +309,14 @@ if (typeof jQuery === 'undefined') {
 
             for (var i = 0; i < total; i++) {
                 var $field    = fields.eq(i),
-                    group     = this.options.fields[field].group || this.options.group,
-                    $parent   = $field.parents(group),
+                    group     = this.options.fields[field].row || this.options.row.selector,
+                    $parent   = $field.closest(group),
                     // Allow user to indicate where the error messages are shown
                     container = ('function' === typeof (this.options.fields[field].container || this.options.container)) ? (this.options.fields[field].container || this.options.container).call(this, $field, this) : (this.options.fields[field].container || this.options.container),
                     $message  = (container && container !== 'tooltip' && container !== 'popover') ? $(container) : this._getMessageContainer($field, group);
 
                 if (container && container !== 'tooltip' && container !== 'popover') {
-                    $message.addClass('has-error');
+                    $message.addClass('help-block');
                 }
 
                 // Remove all error messages and feedback icons
@@ -351,7 +359,7 @@ if (typeof jQuery === 'undefined') {
                 {
                     // $parent.removeClass('has-success').removeClass('has-error').addClass('has-feedback');
                     // Keep error messages which are populated from back-end
-                    $parent.addClass('has-feedback');
+                    $parent.addClass(this.options.row.feedback);
                     var $icon = $('<i/>')
                                     .css('display', 'none')
                                     .addClass('form-control-feedback')
@@ -1038,7 +1046,7 @@ if (typeof jQuery === 'undefined') {
 
             var that  = this,
                 type  = fields.attr('type'),
-                group = this.options.fields[field].group || this.options.group,
+                group = this.options.fields[field].row || this.options.row.selector,
                 total = ('radio' === type || 'checkbox' === type) ? 1 : fields.length;
 
             for (var i = 0; i < total; i++) {
@@ -1047,7 +1055,7 @@ if (typeof jQuery === 'undefined') {
                     continue;
                 }
 
-                var $parent      = $field.parents(group),
+                var $parent      = $field.closest(group),
                     $message     = $field.data('bv.messages'),
                     $allErrors   = $message.find('.help-block[data-bv-validator][data-bv-for="' + field + '"]'),
                     $errors      = validatorName ? $allErrors.filter('[data-bv-validator="' + validatorName + '"]') : $allErrors,
@@ -1078,7 +1086,7 @@ if (typeof jQuery === 'undefined') {
                     case this.STATUS_VALIDATING:
                         isValidField = null;
                         this.disableSubmitButtons(true);
-                        $parent.removeClass('has-success').removeClass('has-error');
+                        $parent.removeClass(this.options.row.valid).removeClass(this.options.row.invalid);
                         if ($icon) {
                             $icon.removeClass(this.options.feedbackIcons.valid).removeClass(this.options.feedbackIcons.invalid).addClass(this.options.feedbackIcons.validating).show();
                         }
@@ -1090,7 +1098,7 @@ if (typeof jQuery === 'undefined') {
                     case this.STATUS_INVALID:
                         isValidField = false;
                         this.disableSubmitButtons(true);
-                        $parent.removeClass('has-success').addClass('has-error');
+                        $parent.removeClass(this.options.row.valid).addClass(this.options.row.invalid);
                         if ($icon) {
                             $icon.removeClass(this.options.feedbackIcons.valid).removeClass(this.options.feedbackIcons.validating).addClass(this.options.feedbackIcons.invalid).show();
                         }
@@ -1114,7 +1122,7 @@ if (typeof jQuery === 'undefined') {
                             }
                         }
 
-                        $parent.removeClass('has-error has-success').addClass(this.isValidContainer($parent) ? 'has-success' : 'has-error');
+                        $parent.removeClass(this.options.row.valid).removeClass(this.options.row.invalid).addClass(this.isValidContainer($parent) ? this.options.row.valid : this.options.row.invalid);
                         if ($tab) {
                             $tab.removeClass('bv-tab-success').removeClass('bv-tab-error').addClass(this.isValidContainer($tabPane) ? 'bv-tab-success' : 'bv-tab-error');
                         }
@@ -1125,7 +1133,7 @@ if (typeof jQuery === 'undefined') {
                     default:
                         isValidField = null;
                         this.disableSubmitButtons(false);
-                        $parent.removeClass('has-success').removeClass('has-error');
+                        $parent.removeClass(this.options.row.valid).removeClass(this.options.row.invalid);
                         if ($icon) {
                             $icon.removeClass(this.options.feedbackIcons.valid).removeClass(this.options.feedbackIcons.invalid).removeClass(this.options.feedbackIcons.validating).hide();
                         }
@@ -1662,8 +1670,10 @@ if (typeof jQuery === 'undefined') {
                             .end()
                         .removeData('bv.messages')
                         // Remove feedback classes
-                        .parents(group)
-                            .removeClass('has-feedback has-error has-success')
+                        .closest(group)
+                            .removeClass(this.options.row.valid)
+                            .removeClass(this.options.row.invalid)
+                            .removeClass(this.options.row.feedback)
                             .end()
                         // Turn off events
                         .off('.bv')
@@ -1820,11 +1830,6 @@ if (typeof jQuery === 'undefined') {
         // Map the field name with validator rules
         fields: null,
 
-        // The CSS selector for indicating the element consists the field
-        // By default, each field is placed inside the <div class="form-group"></div>
-        // You should adjust this option if your form group consists of many fields which not all of them need to be validated
-        group: '.form-group',
-
         // Live validating option
         // Can be one of 3 values:
         // - enabled: The plugin validates fields as soon as they are changed
@@ -1848,7 +1853,18 @@ if (typeof jQuery === 'undefined') {
         //          multiple validators, all of them will be displayed to the user
         // - false: when a field has multiple validators, validation for this field will be terminated upon the first encountered error.
         //          Thus, only the very first error message related to this field will be displayed to the user
-        verbose: true
+        verbose: true,
+
+        row: {
+            // The CSS selector for indicating the element consists the field
+            // By default, each field is placed inside the <div class="form-group"></div>
+            // You should adjust this option if your form group consists of many fields which not all of them need to be validated
+            selector: ".form-group",
+
+            valid: "has-success",
+            invalid: "has-error",
+            feedback: "has-feedback"
+        }
     };
 
     // Available validators
