@@ -23,6 +23,9 @@ if (typeof jQuery === 'undefined') {
     var BootstrapValidator = function(form, options) {
         this.$form   = $(form);
         this.options = $.extend(true, {}, $.fn.bootstrapValidator.DEFAULT_OPTIONS, options);
+        if (this.options.excluded) {
+            this.options.excluded = options.excluded;
+        }
 
         this.$invalidFields = $([]);    // Array of invalid fields
         this.$submitButton  = null;     // The submit button which is clicked to submit form
