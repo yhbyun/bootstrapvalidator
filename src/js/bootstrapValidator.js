@@ -680,7 +680,13 @@ if (typeof jQuery === 'undefined') {
                     }
 
                     // Focus the field
-                    $field.focus();
+                    // support for CKEDITOR
+                    if (window.CKEDITOR && window.CKEDITOR.instances[$field.attr('name')]) {
+                        window.CKEDITOR.instances[$field.attr('name')].container.scrollIntoView(false);
+                        window.CKEDITOR.instances[$field.attr('name')].focus();
+                    } else {
+                        $field.focus();
+                    }
                     break;
                 }
             }
