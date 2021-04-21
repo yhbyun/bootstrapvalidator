@@ -684,6 +684,9 @@ if (typeof jQuery === 'undefined') {
                     if (window.CKEDITOR && window.CKEDITOR.instances[$field.attr('name')]) {
                         window.CKEDITOR.instances[$field.attr('name')].container.scrollIntoView(false);
                         window.CKEDITOR.instances[$field.attr('name')].focus();
+                    } else if ($field.hasClass('selectized')) {
+                        // support for selectize
+                        $field.next('.selectize-control').find('input').focus();
                     } else {
                         $field.focus();
                     }
