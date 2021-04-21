@@ -2,9 +2,9 @@
  * BootstrapValidator (http://bootstrapvalidator.com)
  * The best jQuery plugin to validate form fields. Designed to use with Bootstrap 3
  *
- * @version     v0.5.3, built on 2020-08-08 1:39:58 PM
+ * @version     v0.5.3, built on 2021-04-21 9:24:03 PM
  * @author      https://twitter.com/nghuuphuoc
- * @copyright   (c) 2013 - 2020 Nguyen Huu Phuoc
+ * @copyright   (c) 2013 - 2021 Nguyen Huu Phuoc
  * @license     Commercial: http://bootstrapvalidator.com/license/
  *              Non-commercial: http://creativecommons.org/licenses/by-nc-nd/3.0/
  */
@@ -684,6 +684,9 @@ if (typeof jQuery === 'undefined') {
                     if (window.CKEDITOR && window.CKEDITOR.instances[$field.attr('name')]) {
                         window.CKEDITOR.instances[$field.attr('name')].container.scrollIntoView(false);
                         window.CKEDITOR.instances[$field.attr('name')].focus();
+                    } else if ($field.hasClass('selectized')) {
+                        // support for selectize
+                        $field.next('.selectize-control').find('input').focus();
                     } else {
                         $field.focus();
                     }
